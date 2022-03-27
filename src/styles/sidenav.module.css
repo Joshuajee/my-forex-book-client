@@ -10,12 +10,15 @@
 }
 
 .sidenav hr {
-    position: fixed;
+    position: absolute;
+    width: 100%;
+    top: 42px;
+    border: 0.2px solid #202125;
 }
 
 .sidenav ul {
     position: fixed;
-    top: 40px;
+    top: 50px;
     margin-block-start: 0em;
     margin-block-end: 0em;
     margin-inline-start: 0px;
@@ -35,9 +38,18 @@
     width: 190px;
     margin-top: 2px;
     margin-bottom: 2px;
+    user-select: none;
 }
 
 .sidenav ul li:hover {
     cursor: pointer;
     background: #34353C;
+}
+ 
+.sidenav ul .active {
+    background: #7400F5;
+}
+
+.sidenav ul .active:hover {
+    background: #7200f549;
 }

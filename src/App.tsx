@@ -11,9 +11,10 @@ function App() {
     <div className="App">
 
       <NavBar />
+      
       <SideNav />
 
-      <Body />
+      <Body /> 
 
     </div>
   );
