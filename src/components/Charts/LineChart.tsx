@@ -10,9 +10,8 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+//import { Line } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import { getDate } from '../../utils/date';
 
   
 ChartJS.register(
@@ -25,113 +24,63 @@ ChartJS.register(
   Legend
 );
 
-const points = () => {
-
-  return 30
-} 
-
 
 const LineChart = (props: any) => {
 
-  const { data, title } = props
-
-  const [maxView, setMaxView] = useState(0)
-
-
-  console.log((data.length - 1))
-  
-  useEffect(() => {
-
-    if(data.length > 1)
-      setMaxView((data.length - 1))
-
-  }, [data.length])
+  const { labels, data1, data2, title } = props
 
 
   const [chartData, setChartData] = useState(null)
-
+  
   const options = {
+    responsive: true,
     plugins: {
+      legend: {
+        position: 'top' as const,
+      },
       title: {
         display: true,
-        text: `${title}`,
-      },
-      zoom: {
-        limits: {
-          y: {min: 0, max: 100}
-        },
-        pan: {
-          enabled: true,
-          onPan: (chart: any) => {}
-        }
-      }
-    },
-    responsive: true,
-    scales: {
-      x: {
-        stacked: true,
-        min: maxView - points(),
-        max: maxView,
-      },
-      y: {
-        stacked: true, 
+        text: title,
       },
     },
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
-        },
-        pinch: {
-          enabled: true
-        },
-        mode: 'x',
-      }
-    }
   };
+
+
   
 
   useEffect(() => {
 
-    const labels = []
-    const shortPercentage = []
-    const longPercentage = []
+    if (labels.length !== 0) {
 
-    for (let i = 0; i < data.length; i++) {
+      const data = {
+        labels,
+        datasets: [
+          {
+            label: 'Long',
+            data: data1,
+            backgroundColor: 'rgb(75, 192, 192)',
+          },
+          {
+            label: 'Short',
+            data: data2,
+            backgroundColor: 'rgb(255, 99, 132)',
+          }
+        ],
+      };
 
-      labels.push(getDate(data[i].date))
-      shortPercentage.push(data[i].shortPercentage)
-      longPercentage.push(data[i].longPercentage)
+      setChartData(data)
 
     }
 
-    const data_ = {
-      labels,
-      datasets: [
-        {
-          label: 'Long',
-          data: longPercentage,
-          backgroundColor: 'rgb(75, 192, 192)',
-        },
-        {
-          label: 'Short',
-          data: shortPercentage,
-          backgroundColor: 'rgb(255, 99, 132)',
-        }
-      ],
-    };
-
-    setChartData(data_)
-
     return () => { };
 
-  }, [data]);
+  }, [labels, data1, data2]);
 
 
   return (
     <div className={graph.graph}>
 
-      { chartData && <Bar options={options} data={chartData} /> }
+      {/* { chartData && <Line options={options} data={chartData} /> }  */}
 
     </div>
   )

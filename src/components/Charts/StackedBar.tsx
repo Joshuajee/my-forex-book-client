@@ -12,7 +12,6 @@ import {
   } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import { getDate } from '../../utils/date';
 
   
 ChartJS.register(
@@ -34,18 +33,16 @@ const points = () => {
 const StackedBar = (props: any) => {
 
   const { data, title } = props
+  const { labels, shortPercentage, longPercentage } = data
 
   const [maxView, setMaxView] = useState(0)
 
-
-  console.log((data.length - 1))
-  
   useEffect(() => {
 
-    if(data.length > 1)
-      setMaxView((data.length - 1))
+    if(labels.length > 1)
+      setMaxView((labels.length - 1))
 
-  }, [data.length])
+  }, [labels.length])
 
 
   const [chartData, setChartData] = useState(null)
@@ -93,18 +90,6 @@ const StackedBar = (props: any) => {
 
   useEffect(() => {
 
-    const labels = []
-    const shortPercentage = []
-    const longPercentage = []
-
-    for (let i = 0; i < data.length; i++) {
-
-      labels.push(getDate(data[i].date))
-      shortPercentage.push(data[i].shortPercentage)
-      longPercentage.push(data[i].longPercentage)
-
-    }
-
     const data_ = {
       labels,
       datasets: [
@@ -121,11 +106,11 @@ const StackedBar = (props: any) => {
       ],
     };
 
-    setChartData(data_)
+    if(labels) setChartData(data_)
 
     return () => { };
 
-  }, [data]);
+  }, [labels, longPercentage, shortPercentage]);
 
 
   return (

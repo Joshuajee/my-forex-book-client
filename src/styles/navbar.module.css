@@ -7,3 +7,17 @@
     border-bottom: 0.4px solid #202125;
 }
 
+.menu {
+    display: none;
+}
+
+@media only screen and (max-width: 756px) {
+
+    .menu {
+        position: fixed;
+        right: 10px;
+        top: 14px;
+        display: block;
+    }    
+
+}

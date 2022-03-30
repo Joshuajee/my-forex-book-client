@@ -53,3 +53,12 @@
 .sidenav ul .active:hover {
     background: #7200f549;
 }
+
+
+@media only screen and (max-width: 756px) {
+    
+    .sidenav {
+        display: none;
+    }
+    
+}

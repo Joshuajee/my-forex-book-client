@@ -2,3 +2,26 @@
     background-color: #292A34;
     margin: 6px;
 }
+
+.empty {
+    position: fixed;
+    display: flex;
+    color: white;
+    font-family: sans-serif;
+    width: calc(100% - 270px);
+    height: calc(100% - 120px);
+    justify-content: center;
+    align-items: center;
+    background-color: #292A34;
+    font-size: 40px;
+}
+
+
+@media only screen and (max-width: 756px) {
+    .empty {
+        left: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 120px);
+        font-size: 20px;
+    }
+}

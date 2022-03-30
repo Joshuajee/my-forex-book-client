@@ -13,6 +13,7 @@ export interface IStateRedux {
     assets: any,
     currentAsset: string,
     data: IStateData,
+    showSidenav: boolean
 };
 
 export interface IData {
