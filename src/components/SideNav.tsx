@@ -1,7 +1,7 @@
 import * as React from 'react';
 import sidenav from './../styles/sidenav.module.css';
 import navbar from "./../styles/navbar.module.css";
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAsset, setCurrentAsset } from '../redux/actions';
@@ -19,23 +19,25 @@ const SideNav = () => {
 
   const sidenavRef = useRef(null)
 
-  const [active, setActive] = useState({})
-
   useEffect(() => {
 
-    const url = `${process.env.REACT_APP_HOST}symbols`;
+    if(!assets) {
+
+      const url = `${process.env.REACT_APP_HOST}symbols`;
+      
+      axios.get(url).then(res => {
+
+        if (res.data.status === "success") dispatch(setAsset(res.data.data))
+
+      }, err => {
+
+        console.error(err)
+
+      })
+
+    }
     
-    axios.get(url).then(res => {
-
-      if (res.data.status === "success") dispatch(setAsset(res.data.data))
-
-    }, err => {
-
-      console.error(err)
-
-    })
-  
-  }, [dispatch]);
+  }, [dispatch, assets]);
 
   useEffect(() => {
 
@@ -63,7 +65,10 @@ const SideNav = () => {
               <li 
                 className={ (currentAsset === asset) ? sidenav.active : '' }
                 //className={sidenav.active}
-                onClick={() => dispatch(setCurrentAsset(asset))} 
+                onClick={() => {
+                  dispatch(setCurrentAsset(asset))
+                  dispatch(setSidenav(false))
+                }} 
                 key={asset}> {asset} </li> ) : <li></li>
         }
     

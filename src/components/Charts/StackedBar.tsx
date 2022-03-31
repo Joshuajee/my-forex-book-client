@@ -24,25 +24,19 @@ ChartJS.register(
   Legend
 );
 
-const points = () => {
-
-  return 30
-} 
-
 
 const StackedBar = (props: any) => {
 
-  const { data, title } = props
+  const { data, title, points, maxView, setMaxView, height } = props
   const { labels, shortPercentage, longPercentage } = data
 
-  const [maxView, setMaxView] = useState(0)
 
   useEffect(() => {
 
     if(labels.length > 1)
       setMaxView((labels.length - 1))
 
-  }, [labels.length])
+  }, [labels.length, setMaxView])
 
 
   const [chartData, setChartData] = useState(null)
@@ -67,7 +61,7 @@ const StackedBar = (props: any) => {
     scales: {
       x: {
         stacked: true,
-        min: maxView - points(),
+        min: maxView - points,
         max: maxView,
       },
       y: {
@@ -90,7 +84,7 @@ const StackedBar = (props: any) => {
 
   useEffect(() => {
 
-    const data_ = {
+    const data = {
       labels,
       datasets: [
         {
@@ -106,7 +100,7 @@ const StackedBar = (props: any) => {
       ],
     };
 
-    if(labels) setChartData(data_)
+    if(labels) setChartData(data)
 
     return () => { };
 
@@ -116,7 +110,11 @@ const StackedBar = (props: any) => {
   return (
     <div className={graph.graph}>
 
-      { chartData && <Bar options={options} data={chartData} /> }
+      { chartData && <Bar 
+                        options={options} 
+                        data={chartData}
+                        height={height}
+                        /> }
 
     </div>
   )

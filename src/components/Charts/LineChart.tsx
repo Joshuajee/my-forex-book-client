@@ -5,29 +5,35 @@ import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    BarElement,
+    LineElement,
     Title,
     Tooltip,
     Legend,
+    PointElement,
   } from 'chart.js';
-//import { Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import { getYRange } from './logics';
 
   
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  LineElement,
   zoomPlugin,
   Title,
   Tooltip,
-  Legend
-);
+  Legend,
+  PointElement,
 
+);
 
 const LineChart = (props: any) => {
 
-  const { labels, data1, data2, title } = props
+  const { labels, long, short, title, points, maxView, setMaxView, height } = props
+
+  const [yRange, setYRange] = useState({ max: 0, min: 0})
+
 
 
   const [chartData, setChartData] = useState(null)
@@ -35,12 +41,48 @@ const LineChart = (props: any) => {
   const options = {
     responsive: true,
     plugins: {
+      zoom: {
+        limits: {
+          y: { ...yRange }
+        },
+        pan: {
+          enabled: true,
+          onPan: (chart: any) => { 
+
+            const scales = chart.chart._sortedMetasets[0]._scaleRanges;
+
+            setMaxView(scales.xmax)
+
+          },
+        },
+      },
       legend: {
         position: 'top' as const,
       },
       title: {
         display: true,
         text: title,
+      },
+    },
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true
+        },
+        mode: 'x',
+      }
+    },
+    scales: {
+      x: {
+        min: maxView - points,
+        max:  maxView,
+      },
+      y: {
+        min: yRange.min,
+        max: yRange.max
       },
     },
   };
@@ -50,37 +92,51 @@ const LineChart = (props: any) => {
 
   useEffect(() => {
 
-    if (labels.length !== 0) {
+    const data = {
+      labels,
+      datasets: [
+        {
+          label: 'Long',
+          data: long,
+          backgroundColor: 'rgb(75, 192, 192)',
+          borderColor: 'rgb(75, 192, 192)',
+        },
+        {
+          label: 'Short',
+          data: short,
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)'
+        }
+      ],
+    };
 
-      const data = {
-        labels,
-        datasets: [
-          {
-            label: 'Long',
-            data: data1,
-            backgroundColor: 'rgb(75, 192, 192)',
-          },
-          {
-            label: 'Short',
-            data: data2,
-            backgroundColor: 'rgb(255, 99, 132)',
-          }
-        ],
-      };
 
-      setChartData(data)
-
-    }
+    if (labels.length !== 0) setChartData(data)
 
     return () => { };
 
-  }, [labels, data1, data2]);
+  }, [labels, long, short]);
+
+  useEffect(() => {
+
+    if(labels.length > 1) 
+      setMaxView((labels.length - 1))
+
+  }, [labels.length, long, short, setMaxView])
+
+  useEffect(() => {
+
+    if(maxView) 
+      setYRange(getYRange(long, short, maxView - points, maxView))
+
+  }, [maxView, points, long, short])
 
 
+  
   return (
     <div className={graph.graph}>
 
-      {/* { chartData && <Line options={options} data={chartData} /> }  */}
+      { chartData && <Line height={height} options={options} data={chartData} /> } 
 
     </div>
   )

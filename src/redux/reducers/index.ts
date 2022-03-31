@@ -1,13 +1,13 @@
 import { IStateRedux } from "../../Interfaces/redux";
-import { setData } from "./data";
+import { setData,  } from "./data";
 import { ASSETS, CURRENT_ASSET, DATA, SIDENAV } from "../constants";
 
-
 const initialState : IStateRedux = {
-    assets: null,
+    assets: JSON.parse(localStorage.getItem("assets")),
     currentAsset: null,
     data: { },
-    showSidenav: false
+    showSidenav: false,
+    xMax: 0
 };
   
 function rootReducer(state = initialState, action: any): IStateRedux {
@@ -25,6 +25,8 @@ function rootReducer(state = initialState, action: any): IStateRedux {
             return { ...state, currentAsset: payload }
         case DATA:
             return setData(state, payload)
+        // case DATA_PREPEND:
+        //     return dataPrepend(state, payload)
         case SIDENAV:
             return { ...state, showSidenav: payload }
         default:

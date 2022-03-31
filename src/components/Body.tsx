@@ -12,7 +12,7 @@ import Loader from './Loader';
 import EmptyChart from './Charts/EmptyChart';
 
 
-
+const width = window.innerWidth;
 
 const Body = () => {
 
@@ -22,6 +22,11 @@ const Body = () => {
 
     const [currentData, setCurrentData] = useState([])
     const [loader, setLoader] = useState(false)
+    const [points, setPoints] = useState(30)
+    const [maxView, setMaxView] = useState(0)
+    const [start, setStart] = useState(0)
+    const [height, setHeight] = useState(0)
+
     const [chartData, setChartData] = useState({ labels: [], shortPercentage: [], longPercentage: [], longPositions: [], shortPositions: [],
       totalPositions: [], avgShortPrice: [], avgLongPrice: [], longVolume: [], shortVolume: []})
 
@@ -29,9 +34,10 @@ const Body = () => {
 
       if (currentAsset) {
 
-        setLoader(true)
+        if(start === 0)
+          setLoader(true)
 
-        const url = `${process.env.REACT_APP_HOST}sentiments/${currentAsset}/0/${300}`;
+        const url = `${process.env.REACT_APP_HOST}sentiments/${currentAsset}/${start}/${300}`;
     
         axios.get(url).then(res => {
     
@@ -49,7 +55,7 @@ const Body = () => {
 
       }
 
-    }, [currentAsset, dispatch])
+    }, [currentAsset, start, dispatch])
 
     useEffect(() => {
 
@@ -107,6 +113,27 @@ const Body = () => {
 
     }, [currentData])
 
+    useEffect(() => {
+
+      if (width < 756) {
+        setPoints(20)
+        setHeight(200)
+      } 
+
+
+      if (width < 400 ) {
+        setPoints(10)
+        setHeight(350)
+      } 
+
+      if (maxView < 100) {
+        setStart( x => x + 300)
+      }
+  
+    }, [maxView])
+  
+    
+
     return(
       <div className={body.body}>
 
@@ -116,13 +143,47 @@ const Body = () => {
 
       { !loader ?
         <>
-          <StackedBar data={chartData} title={"Position Percentages"} />  
+          <StackedBar 
+            data={chartData} 
+            title={"Position Percentages"} 
+            points={points} 
+            maxView={maxView}
+            setMaxView={setMaxView}
+            height={height}
+            />  
 
           <LineChart 
-            data1={chartData.longPositions}  
-            data2={chartData.shortVolume} 
+            long={chartData.longVolume}  
+            short={chartData.shortVolume} 
             labels={chartData.labels}
-            title={"Position Volume"} /> 
+            title={"Position Volume"}
+            points={points}
+            maxView={maxView}
+            setMaxView={setMaxView}
+            height={height}
+            /> 
+
+          <LineChart 
+            long={chartData.longPositions}  
+            short={chartData.shortPositions} 
+            labels={chartData.labels}
+            title={"Numbers of Positions"}
+            points={points}
+            maxView={maxView}
+            setMaxView={setMaxView}
+            height={height}
+            /> 
+
+          <LineChart 
+            long={chartData.avgLongPrice}  
+            short={chartData.avgShortPrice} 
+            labels={chartData.labels}
+            title={"Average Position Price"}
+            points={points}
+            maxView={maxView}
+            setMaxView={setMaxView}
+            height={height}
+            /> 
 
         </> : <EmptyChart text={<Loader />} />
       }

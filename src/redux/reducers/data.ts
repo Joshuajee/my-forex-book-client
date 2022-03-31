@@ -13,7 +13,7 @@ export const setData = (state: any, payload: any) : any => {
 
             if(newState[symbol]?.h1) {
 
-                newState[symbol].h1 = payload;
+                newState[symbol].h1 = [...payload, newState[symbol].h1];
 
             }
 
